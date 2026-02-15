@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from src.dependencies import get_db_service
+from src.schemas.pagination import PaginatedResponse
 from src.schemas.place import PlaceResponse
 from src.schemas.project import (
     ProjectCreate,
@@ -48,10 +49,16 @@ async def create_project(
     return project
 
 
-@router.get("/", response_model=list[ProjectListResponse])
-async def list_projects(svc: DBService = Depends(get_db_service)):
-    """List all travel projects."""
-    return await svc.get_projects()
+@router.get("/", response_model=PaginatedResponse[ProjectListResponse])
+async def list_projects(
+    offset: int = Query(0, ge=0),
+    limit: int = Query(20, ge=1, le=100),
+    svc: DBService = Depends(get_db_service),
+):
+    """List all travel projects with pagination."""
+    items = await svc.get_projects(offset=offset, limit=limit)
+    total = await svc.count_projects()
+    return PaginatedResponse(items=items, total=total, offset=offset, limit=limit)
 
 
 @router.get("/{project_id}", response_model=ProjectResponse)

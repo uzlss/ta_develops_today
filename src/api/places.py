@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from src.dependencies import get_db_service
+from src.schemas.pagination import PaginatedResponse
 from src.schemas.place import PlaceAdd, PlaceResponse, PlaceUpdate
 from src.services.artic_service import ArticService
 from src.services.db_service import DBService
@@ -50,18 +51,22 @@ async def add_place(
     return place
 
 
-@router.get("/{project_id}/places", response_model=list[PlaceResponse])
+@router.get("/{project_id}/places", response_model=PaginatedResponse[PlaceResponse])
 async def list_places(
     project_id: int,
+    offset: int = Query(0, ge=0),
+    limit: int = Query(20, ge=1, le=100),
     svc: DBService = Depends(get_db_service),
 ):
-    """List all places for a project."""
+    """List all places for a project with pagination."""
     project = await svc.get_project(project_id)
     if not project:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Project not found"
         )
-    return await svc.get_places(project_id)
+    items = await svc.get_places(project_id, offset=offset, limit=limit)
+    total = await svc.count_places(project_id)
+    return PaginatedResponse(items=items, total=total, offset=offset, limit=limit)
 
 
 @router.get(
