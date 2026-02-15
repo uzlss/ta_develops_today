@@ -139,21 +139,6 @@ curl -X PATCH http://localhost:8000/api/v1/projects/1/places/1 \
 
 ---
 
-## Database Migrations
-
-```bash
-# Generate a new migration
-docker-compose exec backend alembic revision --autogenerate -m "description"
-
-# Apply migrations
-docker-compose exec backend alembic upgrade head
-
-# Rollback one step
-docker-compose exec backend alembic downgrade -1
-```
-
----
-
 ## Tech Stack
 
 - **FastAPI** — async web framework
