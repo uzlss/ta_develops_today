@@ -14,7 +14,7 @@ class ProjectCreate(BaseModel):
     name: str = Field(min_length=1, max_length=255)
     description: str | None = None
     start_date: datetime.date | None = None
-    places: list[PlaceInProjectCreate] = Field(default_factory=list, max_length=10)
+    places: list[PlaceInProjectCreate] = Field(min_length=1, max_length=10)
 
 
 class ProjectUpdate(BaseModel):

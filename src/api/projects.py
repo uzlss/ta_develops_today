@@ -19,13 +19,7 @@ async def create_project(
     body: ProjectCreate,
     svc: DBService = Depends(get_db_service),
 ):
-    """Create a travel project, optionally with places."""
-    if len(body.places) > 10:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="A project can have at most 10 places",
-        )
-
+    """Create a travel project with places."""
     places_data = []
     seen_ids: set[int] = set()
     for p in body.places:
