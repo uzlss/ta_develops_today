@@ -12,13 +12,23 @@ class DBService:
 
     # --- Projects ---
 
-    async def get_projects(self) -> list[Project]:
+    async def get_projects(
+        self, offset: int = 0, limit: int = 20
+    ) -> list[Project]:
         result = await self.db.execute(
             select(Project)
             .options(selectinload(Project.places))
             .order_by(Project.created_at.desc())
+            .offset(offset)
+            .limit(limit)
         )
         return list(result.scalars().all())
+
+    async def count_projects(self) -> int:
+        result = await self.db.execute(
+            select(func.count(Project.id))
+        )
+        return result.scalar()
 
     async def get_project(self, project_id: int) -> Project | None:
         result = await self.db.execute(
@@ -58,11 +68,15 @@ class DBService:
 
     # --- Places ---
 
-    async def get_places(self, project_id: int) -> list[ProjectPlace]:
+    async def get_places(
+        self, project_id: int, offset: int = 0, limit: int = 20
+    ) -> list[ProjectPlace]:
         result = await self.db.execute(
             select(ProjectPlace)
             .where(ProjectPlace.project_id == project_id)
             .order_by(ProjectPlace.created_at)
+            .offset(offset)
+            .limit(limit)
         )
         return list(result.scalars().all())
 
