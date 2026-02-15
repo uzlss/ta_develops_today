@@ -2,7 +2,6 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from src.dependencies import get_db_service
 from src.schemas.pagination import PaginatedResponse
-from src.schemas.place import PlaceResponse
 from src.schemas.project import (
     ProjectCreate,
     ProjectListResponse,
