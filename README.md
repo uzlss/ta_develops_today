@@ -45,7 +45,7 @@ The API will be available at `http://localhost:8000`.
 | Method | Endpoint | Description |
 |---|---|---|
 | `POST` | `/api/v1/projects/` | Create a project with 1–10 places |
-| `GET` | `/api/v1/projects/` | List all projects |
+| `GET` | `/api/v1/projects/` | List all projects (paginated) |
 | `GET` | `/api/v1/projects/{id}` | Get project details with places |
 | `PUT` | `/api/v1/projects/{id}` | Update project info |
 | `DELETE` | `/api/v1/projects/{id}` | Delete project (blocked if any place visited) |
@@ -55,7 +55,7 @@ The API will be available at `http://localhost:8000`.
 | Method | Endpoint | Description |
 |---|---|---|
 | `POST` | `/api/v1/projects/{id}/places` | Add a place to a project |
-| `GET` | `/api/v1/projects/{id}/places` | List all places in a project |
+| `GET` | `/api/v1/projects/{id}/places` | List places in a project (paginated) |
 | `GET` | `/api/v1/projects/{id}/places/{place_id}` | Get a single place |
 | `PATCH` | `/api/v1/projects/{id}/places/{place_id}` | Update notes / mark as visited |
 
@@ -94,6 +94,29 @@ curl -X PATCH http://localhost:8000/api/v1/projects/1/places/1 \
   -H "Content-Type: application/json" \
   -d '{"notes": "Beautiful painting!", "visited": true}'
 ```
+
+### List projects with pagination
+
+```bash
+curl 'http://localhost:8000/api/v1/projects/?offset=0&limit=5'
+```
+
+Response:
+```json
+{
+  "items": [...],
+  "total": 12,
+  "offset": 0,
+  "limit": 5
+}
+```
+
+**Pagination query params** (available on all list endpoints):
+
+| Param | Default | Range | Description |
+|---|---|---|---|
+| `offset` | `0` | `≥ 0` | Number of items to skip |
+| `limit` | `20` | `1–100` | Number of items to return |
 
 ---
 
