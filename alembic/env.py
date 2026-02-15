@@ -9,10 +9,10 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# Import your models' Base metadata here for autogenerate support
-# from models import Base
-# target_metadata = Base.metadata
-target_metadata = None
+# Import models so Alembic can detect them for autogenerate
+from src.db.base import Base
+import src.tables  # noqa: F401  — registers Project, ProjectPlace
+target_metadata = Base.metadata
 
 # Use DATABASE_URL from env, swap asyncpg -> psycopg2 for sync Alembic
 database_url = os.getenv("DATABASE_URL", "")
